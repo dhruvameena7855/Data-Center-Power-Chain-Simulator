@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>DC Power Chain Simulator: ATS, UPS, Genset & PUE</title>
+  <meta name="description" content="Mission-critical 2 MW data center electrical power chain simulator with live ATS, double-conversion UPS, diesel genset, and real-time PUE optimization.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2306b6d4'><path d='M13 2L3 14h9l-1 8 10-12h-9l1-8z'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Navigation & System Status -->
+  <header class="top-nav">
+    <div class="brand-wrap">
+      <div class="brand-icon">⚡</div>
+      <div>
+        <h1 class="brand-title">
+          DC Power Chain Simulator
+          <span class="brand-tag">Tier-IV Resilient</span>
+        </h1>
+        <div class="nav-status">
+          <span class="pulse-dot"></span>
+          <span>Double-Conversion Online UPS &bull; 415 V / 50 Hz &bull; 2.0 MW Critical IT</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <div class="speed-control">
+        <span class="lab">Speed:</span>
+        <button data-sp="1" class="on" title="1x Real-Time">1x</button>
+        <button data-sp="5" title="5x Accelerated">5x</button>
+        <button data-sp="15" title="15x Fast-Forward">15x</button>
+      </div>
+      <button id="themeToggle" class="theme-btn" title="Toggle Visual Theme">
+        <span id="themeIcon">🌙</span> <span id="themeText">Theme</span>
+      </button>
+      <a href="https://github.com/dhruvameena7855/dc-power-chain-simulator" target="_blank" rel="noopener noreferrer" class="github-btn" title="View Source on GitHub">
+        <svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        <span>GitHub</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Executive Continuity & Optimization Headline -->
+  <div class="c s12 hero">
+    <div class="hl">
+      <span>Load continuity through grid failure: <b id="hUp">100%</b> uptime</span>
+      <span style="opacity:0.35">|</span>
+      <span>PUE improved from <b id="hBase" style="color:var(--warn)">1.53</b> to <b id="hCur">1.40</b></span>
+      <span style="opacity:0.35">|</span>
+      <span style="font-size:13px;color:var(--mu);font-weight:500;">Zero-break double conversion inverter &bull; Break-before-make ATS</span>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- Single-Line Mimic Diagram -->
+    <div class="c s8">
+      <h2>Single-line diagram (Live SCADA Mimic)</h2>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 760 300" width="100%" role="img" aria-label="Data center power chain electrical single-line diagram">
+          <defs>
+            <filter id="glowGreen" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+            <linearGradient id="boxGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1e293b" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#0f172a" stop-opacity="0.95"/>
+            </linearGradient>
+            <pattern id="gridBack" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#gridBack)"/>
+
+          <!-- Power Flow Paths -->
+          <path id="lU" class="ln" d="M110 70 H250"/>
+          <path id="lG" class="ln" d="M110 230 H250"/>
+          <path id="lA" class="ln" d="M370 150 H430"/>
+          <path id="lUPS" class="ln" d="M550 150 H610"/>
+          <path id="lC" class="ln" d="M310 110 V30 H640 V60"/>
+          <path id="lB" class="ln" d="M490 190 V240"/>
+
+          <!-- Utility Substation -->
+          <rect id="bU" class="box" x="20" y="40" width="90" height="60"/>
+          <text x="65" y="64" text-anchor="middle" font-weight="700">Utility Grid</text>
+          <text id="tU" x="65" y="85" text-anchor="middle" class="m">415 V</text>
+          <text x="130" y="60" class="m" id="kU"></text>
+
+          <!-- Diesel Genset -->
+          <rect id="bG" class="box" x="20" y="200" width="90" height="60"/>
+          <text x="65" y="224" text-anchor="middle" font-weight="700">Genset 2.5M</text>
+          <text id="tG" x="65" y="245" text-anchor="middle" class="m">OFF</text>
+          <text x="130" y="220" class="m" id="kG"></text>
+
+          <!-- ATS Automatic Transfer Switch -->
+          <rect id="bA" class="box" x="250" y="110" width="120" height="80"/>
+          <text x="310" y="138" text-anchor="middle" font-weight="700">ATS Switch</text>
+          <text id="tA" x="310" y="162" text-anchor="middle" class="m" font-weight="700">UTIL</text>
+          <text x="310" y="178" text-anchor="middle" style="font-size:9px;fill:var(--mu)">BBM Interlock</text>
+
+          <!-- 2 MW Double-Conversion UPS -->
+          <rect id="bP" class="box" x="430" y="110" width="120" height="80"/>
+          <text x="490" y="138" text-anchor="middle" font-weight="700">Online UPS</text>
+          <text id="tP" x="490" y="162" text-anchor="middle" class="m" font-weight="700">ONLINE</text>
+          <text x="490" y="178" text-anchor="middle" style="font-size:9px;fill:var(--mu)">2000 kW VFI</text>
+
+          <!-- Battery Bank -->
+          <rect class="box" x="440" y="240" width="100" height="46"/>
+          <text x="490" y="259" text-anchor="middle" font-weight="700">Battery 300kWh</text>
+          <text id="tB" x="490" y="277" text-anchor="middle" class="m">100%</text>
+
+          <!-- IT Load Server Hall -->
+          <rect id="bI" class="box" x="610" y="110" width="130" height="80"/>
+          <text x="675" y="138" text-anchor="middle" font-weight="700">IT Critical Bus</text>
+          <text id="tI" x="675" y="162" text-anchor="middle" class="m" font-weight="700">0 kW</text>
+          <text x="675" y="178" text-anchor="middle" style="font-size:9px;fill:var(--mu)">Tier-IV Servers</text>
+
+          <!-- Cooling Facility Plant -->
+          <rect class="box" x="590" y="60" width="100" height="0"/>
+          <rect id="bC" class="box" x="575" y="4" width="130" height="30"/>
+          <text id="tC" x="640" y="23" text-anchor="middle" font-weight="700">Cooling Plant</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Interactive Mission Control Panel -->
+    <div class="c s4">
+      <h2>Control Room & Injections</h2>
+      
+      <!-- Fault Injections -->
+      <div class="row">
+        <button class="r" id="bFail" title="Sever utility mains feed" style="flex:1">⚡ Grid Failure</button>
+        <button class="g" id="bRest" title="Re-energize utility grid" style="flex:1">🔌 Restore Grid</button>
+      </div>
+      <div class="row">
+        <button id="bDrill" style="flex:1">⏱️ 90s Outage Drill</button>
+        <button id="bGF" style="flex:1">⚠️ Genset Fail: <span id="gfT">off</span></button>
+      </div>
+      <div class="row">
+        <button id="bSurge" style="flex:1">💥 Surge +900 kW</button>
+        <button id="bReset" style="flex:1">🔄 System Reset</button>
+      </div>
+
+      <!-- Quick Preset Buttons -->
+      <div class="lab" style="margin-top:10px;margin-bottom:6px">Quick Scenarios</div>
+      <div class="preset-group">
+        <button type="button" class="preset-btn" onclick="runPreset('drill')">90s Drill</button>
+        <button type="button" class="preset-btn" onclick="runPreset('genfault')">Genset Fault</button>
+        <button type="button" class="preset-btn" onclick="runPreset('surge')">Surge Overload</button>
+        <button type="button" class="preset-btn" onclick="runPreset('heatwave')">Heatwave 38°C</button>
+        <button type="button" class="preset-btn" onclick="runPreset('ecocool')">Eco Free-Cool</button>
+      </div>
+
+      <!-- IT Load Slider -->
+      <div class="lab">IT Workload: <b id="itV">1200</b> kW</div>
+      <input type="range" id="it" min="200" max="2200" step="50" value="1200" aria-label="IT workload in kW">
+
+      <!-- Cooling Strategy -->
+      <div class="lab" style="margin-top:6px">Cooling Strategy</div>
+      <div class="row">
+        <select id="strat" aria-label="Cooling Strategy Selection">
+          <option value="FIXED">Fixed 18 °C (Legacy Baseline)</option>
+          <option value="MANUAL">Manual Set-point Control</option>
+          <option value="ADAPT" selected>Adaptive (Load + Ambient Aware AI)</option>
+        </select>
+      </div>
+
+      <!-- Setpoint & Ambient Sliders -->
+      <div class="lab">Manual Set-point: <b id="spV">22</b> °C</div>
+      <input type="range" id="sp" min="18" max="30" step="0.5" value="22" aria-label="Manual set-point in degrees Celsius">
+
+      <div class="lab" style="margin-top:6px">Outdoor Ambient: <b id="ambV">24</b> °C</div>
+      <input type="range" id="amb" min="0" max="40" step="1" value="24" aria-label="Outdoor ambient temperature in degrees Celsius">
+    </div>
+
+    <!-- 4 KPI Telemetry Cards -->
+    <div class="c s3">
+      <h2>IT Critical Bus</h2>
+      <div class="kpi" id="kIT">0 <small>kW</small></div>
+      <span class="pill ok" id="pLoad">ENERGIZED</span>
+      <div class="lab" style="margin-top:8px">Transfer gap at IT: <b>0 ms</b> (Double-Conversion)</div>
+    </div>
+
+    <div class="c s3">
+      <h2>Live Facility PUE</h2>
+      <div class="kpi" id="kPUE">0</div>
+      <div class="lab">Cumulative: <b id="kCum">1.00</b> &nbsp;|&nbsp; Target: <b id="kSP">18</b> °C</div>
+    </div>
+
+    <div class="c s3">
+      <h2>Online UPS System</h2>
+      <div class="kpi" id="kUPS">0 <small>% load</small></div>
+      <div class="bar"><i id="bSoc"></i></div>
+      <div class="lab">Battery <b id="kSoc">100</b>% &bull; Eff <b id="kEff">0</b>% &bull; <span id="kOv">no overload</span></div>
+    </div>
+
+    <div class="c s3">
+      <h2>Genset & Server Hall</h2>
+      <div class="kpi" id="kGen">OFF</div>
+      <div class="lab">Fuel <b id="kFuel">100</b>% &bull; Room <b id="kRoom">22</b> °C &bull; ATS <b id="kTr">0</b></div>
+    </div>
+
+    <!-- Real-Time Telemetry Charts -->
+    <div class="c s6">
+      <h2>Power Breakdown (kW)</h2>
+      <canvas id="c1" height="190"></canvas>
+      <div class="leg">
+        <span><i style="background:var(--it)"></i>IT Load</span>
+        <span><i style="background:var(--ac)"></i>Utility Grid</span>
+        <span><i style="background:var(--gen)"></i>Diesel Genset</span>
+        <span><i style="background:var(--ok)"></i>Cooling Plant</span>
+      </div>
+    </div>
+
+    <div class="c s6">
+      <h2>PUE: Current Strategy vs 18 °C Baseline</h2>
+      <canvas id="c2" height="190"></canvas>
+      <div class="leg">
+        <span><i style="background:var(--ok)"></i>Current Adaptive Strategy</span>
+        <span><i style="background:var(--warn)"></i>Legacy 18 °C Baseline</span>
+      </div>
+    </div>
+
+    <div class="c s6">
+      <h2>Battery SoC (%) & Room Temperature (°C &times; 2)</h2>
+      <canvas id="c3" height="190"></canvas>
+      <div class="leg">
+        <span><i style="background:var(--warn)"></i>Battery State of Charge</span>
+        <span><i style="background:var(--bad)"></i>Hall Temperature &times; 2</span>
+      </div>
+    </div>
+
+    <div class="c s6">
+      <h2>System Telemetry Event Log</h2>
+      <div id="log"></div>
+    </div>
+
+    <!-- Sequence of Operations Engine -->
+    <div class="c s6">
+      <h2>Sequence of Operations: Live Transition Tracker</h2>
+      <div id="seq"></div>
+      <div class="nar" id="nar"></div>
+    </div>
+
+    <!-- Dual-Channel Bus Oscilloscope -->
+    <div class="c s6">
+      <h2>Dual-Channel Bus Oscilloscope (415 V, 50 Hz)</h2>
+      <div class="oscilloscope-wrap">
+        <canvas id="c4" height="155"></canvas>
+      </div>
+      <div class="leg" style="margin-top:6px">
+        <span><i style="background:var(--ac)"></i>CH1: Utility Phase Voltage</span>
+        <span><i style="background:var(--ok)"></i>CH2: Inverter Regulated IT Bus</span>
+      </div>
+      <div class="rd">
+        <span>Grid: <b id="rU">415</b> V</span>
+        <span>IT Bus: <b id="rB">415</b> V</span>
+        <span>Freq: <b id="rF">50.00</b> Hz</span>
+        <span>IT Current: <b id="rI">0</b> A</span>
+      </div>
+    </div>
+
+    <!-- Business, ESG & Financial Telemetry -->
+    <div class="c s12">
+      <h2>Business, Operations & ESG Impact Matrix</h2>
+      <div class="kg">
+        <div>
+          <div class="lab">Grid Energy Bill</div>
+          <div class="kpi" id="bCost">₹0</div>
+        </div>
+        <div>
+          <div class="lab">Diesel Fuel Burned</div>
+          <div class="kpi" id="bDsl">0 L</div>
+        </div>
+        <div>
+          <div class="lab">Carbon Emitted</div>
+          <div class="kpi" id="bCo2">0 kg</div>
+        </div>
+        <div>
+          <div class="lab">Battery Runway</div>
+          <div class="kpi" id="bBat">0 min</div>
+        </div>
+        <div>
+          <div class="lab">Fuel Autonomy</div>
+          <div class="kpi" id="bFu">0 h</div>
+        </div>
+        <div>
+          <div class="lab">Facility Downtime</div>
+          <div class="kpi" id="bDn">0 s</div>
+        </div>
+        <div>
+          <div class="lab">Annual Cost Savings</div>
+          <div class="kpi" id="bSv" style="color:var(--ok)">₹0</div>
+        </div>
+        <div>
+          <div class="lab">Annual CO₂ Avoided</div>
+          <div class="kpi" id="bCv" style="color:var(--ok)">0 t</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PUE Physical Losses Breakdown -->
+    <div class="c s12">
+      <h2>PUE Losses & Thermodynamic Modeling (kW)</h2>
+      <div id="brk"></div>
+      <div class="lab" style="line-height:1.6;font-size:12px;">
+        <b>Physics Engine:</b> Double-conversion UPS efficiency curve (peaks at ~96.5% above 40% load factor), 1.5% PDU distribution and 1.2% step-down transformer losses. Chiller COP rises dynamically with elevated chilled-water set-points and degrades during hot outdoor ambients. Integrated waterside economizer provides free-cooling whenever outdoor ambient temperature drops &ge; 6 °C below supply set-point. Server internal fan power model penalizes cooling above 24 °C rack inlet. Inverse-time overload curves: 105% (60 s), 125% (10 s), 150% (immediate transfer to static bypass).
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
