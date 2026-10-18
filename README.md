@@ -1,12 +1,12 @@
 # ⚡ DC Power Chain Simulator (ATS + Online UPS + Genset + PUE)
 
-[![Deploy to GitHub Pages](https://github.com/dhruvameena7855/dc-power-chain-simulator/actions/workflows/deploy.yml/badge.svg)](https://github.com/dhruvameena7855/dc-power-chain-simulator/actions/workflows/deploy.yml)
-[![Tests Passing](https://img.shields.io/badge/tests-6%2F6%20passing-10b981.svg?style=flat-square)](https://github.com/dhruvameena7855/dc-power-chain-simulator/actions)
-[![Live Demo](https://img.shields.io/badge/live%20demo-online-06b6d4.svg?style=flat-square&logo=githubpages&logoColor=white)](https://dhruvameena7855.github.io/dc-power-chain-simulator/)
+[![Deploy to GitHub Pages](https://github.com/dhruvameena7855/Data-Center-Power-Chain-Simulator/actions/workflows/deploy.yml/badge.svg)](https://github.com/dhruvameena7855/Data-Center-Power-Chain-Simulator/actions/workflows/deploy.yml)
+[![Tests Passing](https://img.shields.io/badge/tests-6%2F6%20passing-10b981.svg?style=flat-square)](https://github.com/dhruvameena7855/Data-Center-Power-Chain-Simulator/actions)
+[![Live Demo](https://img.shields.io/badge/live%20demo-online-06b6d4.svg?style=flat-square&logo=githubpages&logoColor=white)](https://dhruvameena7855.github.io/Data-Center-Power-Chain-Simulator/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0%20(vanilla%20web)-a855f7.svg?style=flat-square)](#tech-stack)
 
-> **Live Interactive Simulator:** [https://dhruvameena7855.github.io/dc-power-chain-simulator/](https://dhruvameena7855.github.io/dc-power-chain-simulator/)
+> **Live Interactive Simulator:** [https://dhruvameena7855.github.io/Data-Center-Power-Chain-Simulator/](https://dhruvameena7855.github.io/Data-Center-Power-Chain-Simulator/)
 
 A high-fidelity, real-time browser simulation of a **Tier-IV 2.0 MW Mission-Critical Data Center Electrical Power Chain**. Models utility grid failure, break-before-make ATS transitions, 2.5 MW diesel genset cranking and synchronization, double-conversion online UPS zero-break battery backup, static bypass overload curves, and dynamic PUE thermodynamic optimization with waterside economizer free cooling.
 
@@ -132,7 +132,7 @@ This repository is configured with automated GitHub Actions continuous deploymen
    - Under **Build and deployment** &rarr; **Source**, ensure **GitHub Actions** is selected.
 3. Your simulator is automatically built, verified, and live at:
    ```
-   https://dhruvameena7855.github.io/dc-power-chain-simulator/
+   https://dhruvameena7855.github.io/Data-Center-Power-Chain-Simulator/
    ```
 
 ### Run Locally
@@ -140,8 +140,8 @@ No build tools or heavy packages required:
 
 ```bash
 # Clone the repository
-git clone https://github.com/dhruvameena7855/dc-power-chain-simulator.git
-cd dc-power-chain-simulator
+git clone https://github.com/dhruvameena7855/Data-Center-Power-Chain-Simulator.git
+cd Data-Center-Power-Chain-Simulator
 
 # Open index.html directly in your favorite browser, or start a static server:
 npx serve .
