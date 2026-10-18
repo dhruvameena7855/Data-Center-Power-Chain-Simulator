@@ -545,24 +545,37 @@ if (typeof localStorage !== 'undefined') {
 // Preset Scenarios
 const glob = typeof window !== 'undefined' ? window : globalThis;
 glob.runPreset = function (p) {
+  const trigger = btn => {
+    if (!btn) return;
+    if (typeof btn.click === 'function') btn.click();
+    else if (typeof btn.onclick === 'function') btn.onclick();
+  };
+  const triggerInput = el => {
+    if (!el) return;
+    if (typeof el.oninput === 'function') el.oninput({ target: el });
+    else if (typeof el.dispatchEvent === 'function' && typeof Event !== 'undefined') {
+      try { el.dispatchEvent(new Event('input')); } catch (e) {}
+    }
+  };
+
   if (p === 'drill') {
-    if ($('bDrill')) $('bDrill').click();
+    trigger($('bDrill'));
   } else if (p === 'genfault') {
-    if (!S.gf && $('bGF')) $('bGF').click();
-    if (S.grid && $('bFail')) $('bFail').click();
+    if (!S.gf) trigger($('bGF'));
+    if (S.grid) trigger($('bFail'));
   } else if (p === 'surge') {
-    if ($('bSurge')) $('bSurge').click();
+    trigger($('bSurge'));
   } else if (p === 'heatwave') {
-    if ($('amb')) { $('amb').value = 38; $('amb').dispatchEvent(new Event('input')); }
-    if ($('it')) { $('it').value = 1800; $('it').dispatchEvent(new Event('input')); }
+    if ($('amb')) { $('amb').value = 38; triggerInput($('amb')); }
+    if ($('it')) { $('it').value = 1800; triggerInput($('it')); }
     log('Scenario: Extreme Summer Heatwave (38 °C ambient, 1.8 MW IT workload)', 'var(--warn)');
   } else if (p === 'ecocool') {
-    if ($('amb')) { $('amb').value = 10; $('amb').dispatchEvent(new Event('input')); }
+    if ($('amb')) { $('amb').value = 10; triggerInput($('amb')); }
     if ($('strat')) { $('strat').value = 'ADAPT'; }
-    if ($('it')) { $('it').value = 1200; $('it').dispatchEvent(new Event('input')); }
+    if ($('it')) { $('it').value = 1200; triggerInput($('it')); }
     log('Scenario: Waterside Economizer Free-Cooling Mode (10 °C ambient)', 'var(--ok)');
   } else if (p === 'nominal') {
-    if ($('bReset')) $('bReset').click();
+    trigger($('bReset'));
   }
 };
 
